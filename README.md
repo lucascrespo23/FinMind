@@ -66,7 +66,32 @@ OpenAPI: `backend/app/openapi.yaml`
 - Bills: CRUD `/bills`, pay/mark `/bills/{id}/pay`
 - Reminders: CRUD `/reminders`, trigger `/reminders/run`
 - Insights: `/insights/monthly`, `/insights/budget-suggestion`
+- GDPR / Privacy:
+  - `GET /user/export` — Download all personal data as a ZIP (JSON inside)
+  - `DELETE /user` — Permanently delete account and all associated data
 - Weekly Digest: `/weekly-summary` — smart weekly financial summary (see below)
+
+## GDPR: Data Export & Account Deletion
+
+FinMind supports GDPR-compliant data portability and right to erasure:
+
+### Export Your Data (`GET /user/export`)
+- Returns a ZIP file containing all user data (profile, expenses, bills, categories, reminders, subscriptions, audit logs) as JSON
+- Password hashes are excluded from the export
+- An audit log entry is created for each export request
+- Requires authentication (JWT)
+
+### Delete Your Account (`DELETE /user`)
+- Permanently and irreversibly deletes the user account and **all** associated data
+- Cascade deletes: expenses, recurring expenses, bills, reminders, categories, ad impressions, subscriptions, and audit logs
+- Invalidates all active Redis sessions
+- Creates an anonymized audit log entry recording the deletion
+- Requires authentication (JWT)
+
+### Frontend
+The Account Settings page includes:
+- **"Export My Data"** button — downloads the ZIP immediately
+- **"Delete Account"** button — opens a confirmation dialog before permanent deletion
 
 ## Weekly Digest (Smart Summary)
 
